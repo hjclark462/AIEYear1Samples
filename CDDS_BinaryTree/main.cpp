@@ -69,14 +69,14 @@ int main(int argc, char* argv[])
         if (GuiButton(Rectangle { 160, 25, 125, 30 }, GuiIconText(RICON_OK_TICK, "Insert")))
         {
             // Implement the code to insert valueBoxValue into your binary tree here! 
-            //m_binaryTree.Insert(valueBoxValue);
-            //m_selectedNode = m_binaryTree.Find(valueBoxValue);
+            m_binaryTree.Insert(valueBoxValue);
+            m_selectedNode = m_binaryTree.Find(valueBoxValue);
         }
 
         if (GuiButton(Rectangle{ 160, 60, 125, 30 }, GuiIconText(RICON_CROSS, "Remove")))
         {
             // Implement the code to remove the node with value = valueBoxValue from your binary tree here! 
-            //m_binaryTree.Remove(valueBoxValue);
+            m_binaryTree.Remove(valueBoxValue);
         }
 
         // draw the binary tree

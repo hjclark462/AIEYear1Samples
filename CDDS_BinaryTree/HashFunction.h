@@ -15,7 +15,6 @@ namespace HashFunction
     unsigned int DJBHash(const char* data, unsigned int length);
     unsigned int DEKHash(const char* data, unsigned int length);
     unsigned int APHash(const char* data, unsigned int length);
-    // ADD YOUR FUNCTIONS HERE 
 
     // a helper to access a default hash function 
  //   static HashFunc default = badHash;

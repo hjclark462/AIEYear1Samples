@@ -17,5 +17,5 @@ namespace HashFunction
     unsigned int APHash(const char* data, unsigned int length);
 
     // a helper to access a default hash function 
- //   static HashFunc default = badHash;
+    static HashFunc defult = APHash;
 }

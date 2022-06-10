@@ -147,10 +147,8 @@ namespace HashFunction
 		for (i = 0; i < length; ++data, ++i)
 		{
 			hash ^= ((i & 1) == 0) ? ((hash << 7) ^ (*data) * (hash >> 3)) :
-				(~((hash << 11) + ((*data) ^ (hash >> 5))));
+									(~((hash << 11) + ((*data) ^ (hash >> 5))));
 		}
-
 		return hash;
 	}
-
 }

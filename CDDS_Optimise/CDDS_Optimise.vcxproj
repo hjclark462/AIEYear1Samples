@@ -167,13 +167,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\CDDS_BinaryTree\HashFunction.cpp" />
     <ClCompile Include="Critter.cpp" />
+    <ClCompile Include="HashFunction.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\CDDS_BinaryTree\HashFunction.h" />
     <ClInclude Include="Critter.h" />
+    <ClInclude Include="HashFunction.h" />
     <ClInclude Include="List.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

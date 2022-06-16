@@ -21,7 +21,7 @@
     <ClCompile Include="Critter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\CDDS_BinaryTree\HashFunction.cpp">
+    <ClCompile Include="HashFunction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -32,7 +32,7 @@
     <ClInclude Include="List.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\CDDS_BinaryTree\HashFunction.h">
+    <ClInclude Include="HashFunction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

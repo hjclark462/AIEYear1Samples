@@ -137,7 +137,7 @@ void BinaryTree::Remove(int a_nValue)
 				foundParent->SetRight(replacementNode);
 			}
 		}
-		spif (rightOfReplacement != nullptr && replacementPrevious != foundNode)
+		else if (rightOfReplacement != nullptr && replacementPrevious != foundNode)
 		{
 			replacementPrevious->SetLeft(rightOfReplacement);
 		}

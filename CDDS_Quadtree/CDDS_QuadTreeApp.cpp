@@ -29,8 +29,9 @@ void CDDS_QuadTreeApp::Shutdown() {
 	UnloadTexture(m_rock);
 }
 
-void CDDS_QuadTreeApp::Update(float deltaTime) {
-
+void CDDS_QuadTreeApp::Update(float deltaTime) 
+{
+	m_quadtree.Update(deltaTime);
 }
 
 void CDDS_QuadTreeApp::Draw() {

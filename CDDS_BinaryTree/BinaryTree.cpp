@@ -36,9 +36,12 @@ void BinaryTree::Insert(int a_nValue)
 {
 	TreeNode* newNode = new TreeNode(a_nValue);
 	if (IsEmpty())
-	{
-		
+	{		
 		m_pRoot = newNode;
+	}
+	else if (FindNode(a_nValue, newNode, newNode))
+	{
+		//delete newNode;
 	}
 	else
 	{
@@ -86,9 +89,9 @@ bool BinaryTree::FindNode(int a_nSearchValue, TreeNode*& ppOutNode, TreeNode*& p
 	{
 		if (a_nSearchValue == pCurrent->GetData())
 		{
-			return true;
 			ppOutNode = pCurrent;
 			ppOutParent = pParent;
+			return true;			
 		}
 		else
 		{
@@ -113,8 +116,24 @@ void BinaryTree::Remove(int a_nValue)
 	TreeNode* foundParent;
 	FindNode(a_nValue, foundNode, foundParent);
 	//Removing the Node starts here
-	TreeNode* leftOfRemoved = foundNode->GetLeft();
-	TreeNode* rightOfRemoved = foundNode->GetRight();
+	TreeNode* leftOfRemoved;
+	if (foundNode->GetLeft() != nullptr)
+	{
+		leftOfRemoved = foundNode->GetLeft();
+	}
+	else
+	{
+		leftOfRemoved = nullptr;
+	}
+	TreeNode* rightOfRemoved;
+	if (foundNode->GetRight() != nullptr)
+	{
+		rightOfRemoved = foundNode->GetRight();
+	}
+	else
+	{
+		rightOfRemoved = nullptr;
+	}
 	if (rightOfRemoved != nullptr)
 	{
 		TreeNode* replacementNode = rightOfRemoved;
@@ -168,7 +187,7 @@ void BinaryTree::Remove(int a_nValue)
 		}
 		else
 		{
-			root = leftOfRemoved;
+			m_pRoot = leftOfRemoved;
 		}
 	}
 	else
@@ -184,6 +203,10 @@ void BinaryTree::Remove(int a_nValue)
 				foundParent->SetRight(nullptr);
 			}
 			delete foundNode;
+		}
+		else
+		{
+			m_pRoot = nullptr;
 		}
 	}
 }

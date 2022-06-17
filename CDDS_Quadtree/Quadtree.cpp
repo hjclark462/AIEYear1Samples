@@ -116,7 +116,28 @@ bool Quadtree::Insert(GameObject* gameObject)
 
 void Quadtree::Update(float deltaTime)
 {
-
+	if (m_children != nullptr) {
+		for (int i = 0; i < 4; i++) {
+			m_children[i]->Update(deltaTime);
+		}
+	}
+	if (m_objects != nullptr)
+	{
+		for (int i = 0; i < m_capacity; i++)
+		{
+			if (m_objects[i] != nullptr)
+			{
+				m_objects[i]->Update(deltaTime);	
+				
+			}			
+		}
+	}
+	if (!m_boundary.contains)
+	{
+		Insert(m_objects[i]);
+		m_objects[i];
+	}
+	
 }
 
 void Quadtree::Draw()
@@ -134,13 +155,15 @@ void Quadtree::Draw()
 		m_boundary.m_centre.x + m_boundary.m_halfSize.x, m_boundary.m_centre.y + m_boundary.m_halfSize.y,
 		m_boundary.m_centre.x + m_boundary.m_halfSize.x, m_boundary.m_centre.y - m_boundary.m_halfSize.y, RED);
 
-	if (m_children != nullptr) {
+	if (m_children != nullptr) 
+	{
 		for (int i = 0; i < 4; i++) {
 			m_children[i]->Draw();
 		}
 	}
 
-	if (m_objects != nullptr) {
+	if (m_objects != nullptr) 
+	{
 		for (int i = 0; i < m_capacity; i++) {
 			if (m_objects[i] != nullptr)
 				m_objects[i]->Draw();

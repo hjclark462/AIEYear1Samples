@@ -25,10 +25,11 @@ public:
 protected:
 	int m_screenWidth;
 	int m_screenHeight;
-
+	int* memptr;
+	
 	// define a block of entities that should be shared
 	enum { ENTITY_COUNT = 10 };
-	Entity m_entities[ENTITY_COUNT];
-
+	Entity* m_entities;
+	
 	HANDLE h;
 };

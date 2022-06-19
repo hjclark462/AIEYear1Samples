@@ -25,7 +25,9 @@ public:
 protected:
 	int m_screenWidth;
 	int m_screenHeight;
-
+	int* memptr;
+	HANDLE h;	
 	// an array of an unknown number of entities
-	std::vector<Entity> m_entities;
+	int ENTITY_COUNT;
+	Entity* m_entities;
 };

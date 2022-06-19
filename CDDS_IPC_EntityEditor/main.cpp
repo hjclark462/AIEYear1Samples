@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
 {
     float deltaTime = 0;
     EntityEditorApp app(800, 450);
-
+    
     // Initialization
     //--------------------------------------------------------------------------------------
     app.Startup();

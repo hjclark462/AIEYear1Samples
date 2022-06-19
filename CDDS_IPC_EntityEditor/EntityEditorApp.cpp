@@ -7,42 +7,48 @@
 #include "raygui.h"
 
 
-EntityEditorApp::EntityEditorApp(int screenWidth, int screenHeight) : m_screenWidth(screenWidth), m_screenHeight(screenHeight) {
-
-}
-
-EntityEditorApp::~EntityEditorApp() {
+EntityEditorApp::EntityEditorApp(int screenWidth, int screenHeight) : m_screenWidth(screenWidth), m_screenHeight(screenHeight) 
+{
 	
 }
 
-bool EntityEditorApp::Startup() {
+EntityEditorApp::~EntityEditorApp() 
+{
+	
+}
 
+bool EntityEditorApp::Startup() 
+{
 	InitWindow(m_screenWidth, m_screenHeight, "EntityDisplayApp");
 	SetTargetFPS(60);
-
 	srand(time(nullptr));
-	for (auto& entity : m_entities) {
-		entity.x = rand()%m_screenWidth;
-		entity.y = rand()%m_screenHeight;
-		entity.size = 10;
-		entity.speed = rand() % 100;
-		entity.rotation = rand() % 360;
-		entity.r = rand() % 255;
-		entity.g = rand() % 255;
-		entity.b = rand() % 255;
-	}
-	
+	h = CreateFileMapping(INVALID_HANDLE_VALUE, nullptr, PAGE_READWRITE, 0, sizeof(int)+(sizeof(Entity)*ENTITY_COUNT), L"MySharedMemory");
+	memptr = (int*)MapViewOfFile(h, FILE_MAP_ALL_ACCESS, 0, 0, sizeof(int) + (sizeof(Entity) * ENTITY_COUNT));	
+	*memptr = ENTITY_COUNT;
+	memptr++;
+	m_entities = (Entity*)memptr;
+	for (int i = 0; i < ENTITY_COUNT; i++) 
+	{
+		m_entities[i].x = rand()%m_screenWidth;
+		m_entities[i].y = rand()%m_screenHeight;
+		m_entities[i].size = 10;
+		m_entities[i].speed = rand() % 100;
+		m_entities[i].rotation = rand() % 360;
+		m_entities[i].r = rand() % 255;
+		m_entities[i].g = rand() % 255;
+		m_entities[i].b = rand() % 255;
+	}		
 	return true;
 }
 
-void EntityEditorApp::Shutdown() {
-
+void EntityEditorApp::Shutdown() 
+{UnmapViewOfFile(h);
+	CloseHandle(h);
 	CloseWindow();        // Close window and OpenGL context
 }
 
-void EntityEditorApp::Update(float deltaTime) {
-	
-
+void EntityEditorApp::Update(float deltaTime) 
+{
 	// select an entity to edit
 	static int selection = 0;
 	static bool selectionEditMode = false;
@@ -53,7 +59,6 @@ void EntityEditorApp::Update(float deltaTime) {
 	static bool speedEditMode = false;
 	static Color colorPickerValue = WHITE;
 
-
 	if (GuiSpinner(Rectangle{ 90, 25, 125, 25 }, "Entity", &selection, 0, ENTITY_COUNT-1, selectionEditMode)) selectionEditMode = !selectionEditMode;
 	
 	int intX = (int)m_entities[selection].x;	
@@ -61,7 +66,6 @@ void EntityEditorApp::Update(float deltaTime) {
 	int intRotation = (int)m_entities[selection].rotation;
 	int intSize = (int)m_entities[selection].size;
 	int intSpeed = (int)m_entities[selection].speed;
-
 
 	// display editable stats within a GUI	
 	GuiGroupBox(Rectangle{ 25, 70, 480, 220 }, "Entity Properties");
@@ -81,10 +85,10 @@ void EntityEditorApp::Update(float deltaTime) {
 	m_entities[selection].g = colorPickerValue.g;
 	m_entities[selection].b = colorPickerValue.b;
 
-
 	// move entities
 
-	for (int i=0; i<ENTITY_COUNT; i++) {
+	for (int i=0; i<ENTITY_COUNT; i++) 
+	{
 		if(selection == i)
 			continue;
 
@@ -100,21 +104,23 @@ void EntityEditorApp::Update(float deltaTime) {
 		m_entities[i].y = fmod(m_entities[i].y, m_screenHeight);
 		if (m_entities[i].y < 0)
 			m_entities[i].y += m_screenHeight;
-	}
+	}	
 }
 
-void EntityEditorApp::Draw() {
+void EntityEditorApp::Draw() 
+{
 	BeginDrawing();
 
 	ClearBackground(RAYWHITE);
 
 	// draw entities
-	for (auto& entity : m_entities) {
+	for (int i = 0; i < ENTITY_COUNT; i++) 
+	{
 		DrawRectanglePro(
-			Rectangle{ entity.x, entity.y, entity.size, entity.size }, // rectangle
-			Vector2{ entity.size / 2, entity.size / 2 }, // origin
-			entity.rotation,
-			Color{ entity.r, entity.g, entity.b, 255 });
+			Rectangle{ m_entities[i].x, m_entities[i].y, m_entities[i].size, m_entities[i].size }, // rectangle
+			Vector2{ m_entities[i].size / 2, m_entities[i].size / 2 }, // origin
+			m_entities[i].rotation,
+			Color{ m_entities[i].r, m_entities[i].g, m_entities[i].b, 255 });
 	}
 
 	// output some text, uses the last used colour

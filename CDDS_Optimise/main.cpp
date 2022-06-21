@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
 	const int MAX_VELOCITY = 80;
 
 	srand(time(NULL));
-	HashTable<const char[], Texture2D> resources(CRITTER_COUNT);
+	HashTable<Texture2D> resources(CRITTER_COUNT);
 
 
 	// create some critters
@@ -50,7 +50,8 @@ int main(int argc, char* argv[])
 	List<Critter> aliveCritters;
 	List<Critter> deadCritters;
 
-	resources.operator["res/10.png"]
+	
+	resources.Add("res/10.png", LoadTexture("res/10.png"));
 
 	for (int i = 0; i < CRITTER_COUNT; i++)
 	{

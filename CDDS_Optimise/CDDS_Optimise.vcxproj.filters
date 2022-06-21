@@ -21,18 +21,12 @@
     <ClCompile Include="Critter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="HashFunction.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Critter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="List.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HashFunction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="HashTable.h">

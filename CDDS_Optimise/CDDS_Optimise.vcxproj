@@ -168,12 +168,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Critter.cpp" />
-    <ClCompile Include="HashFunction.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Critter.h" />
-    <ClInclude Include="HashFunction.h" />
     <ClInclude Include="HashTable.h" />
     <ClInclude Include="List.h" />
   </ItemGroup>

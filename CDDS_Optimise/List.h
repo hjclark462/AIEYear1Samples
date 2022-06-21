@@ -10,7 +10,7 @@ class List
 		Value data;
 		Node* previous;
 		Node* next;
-		Node(const Value& d = T{}, Node* p = nullptr, Node* n = nullptr)
+		Node(const Value& d = Value{}, Node* p = nullptr, Node* n = nullptr)
 			: data{ d }, previous{ p }, next{ n } {}
 		Node(Value&& d, Node* p = nullptr, Node* n = nullptr)
 			: data{ std::move(d) }, previous{ p }, next{ n } {}

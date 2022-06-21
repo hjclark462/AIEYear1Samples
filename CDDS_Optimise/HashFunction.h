@@ -1,5 +1,7 @@
 #pragma once
 #include <functional>
+#include <string>
+using namespace std;
 namespace HashFunction
 {
     typedef std::function< unsigned int(const char*, unsigned int)> HashFunc;

@@ -1,18 +1,18 @@
 #pragma once
 #include <ostream>
-template<typename T>
+template<typename Value>
 class List
 {
 	//	Nested Node class
 	struct Node
 	{
 	public:
-		T data;
+		Value data;
 		Node* previous;
 		Node* next;
-		Node(const T& d = T{}, Node* p = nullptr, Node* n = nullptr)
+		Node(const Value& d = T{}, Node* p = nullptr, Node* n = nullptr)
 			: data{ d }, previous{ p }, next{ n } {}
-		Node(T&& d, Node* p = nullptr, Node* n = nullptr)
+		Node(Value&& d, Node* p = nullptr, Node* n = nullptr)
 			: data{ std::move(d) }, previous{ p }, next{ n } {}
 	};
 	int size;
@@ -27,7 +27,7 @@ public:
 	public:
 
 		ConstIterator(); //	Default zero parameter constructor
-		const T& operator*() const;	//	operator*() to return element
+		const Value& operator*() const;	//	operator*() to return element
 
 		//	Increment/Decrement operators
 		ConstIterator& operator++();
@@ -40,18 +40,19 @@ public:
 		bool operator!=(const ConstIterator& rhs) const;
 	protected:
 		Node* current; // pointer to node in List
-		T& retrieve() const;	//	retrieve the element refers to
+		Value& retrieve() const;	//	retrieve the element refers to
 		ConstIterator(Node* p);	//	Protected constructor
 
-		friend class List<T>;
+		friend class List<Value>;
 	};
+
 	//	Nested Iterator class
 	class Iterator : public ConstIterator
 	{
 	public:
 		Iterator();
-		T& operator*();
-		const T& operator*() const;
+		Value& operator*();
+		const Value& operator*() const;
 
 		// increment/decrement operators
 		Iterator& operator++();
@@ -61,7 +62,7 @@ public:
 
 	protected:
 		Iterator(Node* p);
-		friend class List<T>;
+		friend class List<Value>;
 	};
 
 	//	Constructor, destructor, copy constructor
@@ -69,7 +70,7 @@ public:
 	List(const List& other);	//	Copy constructor
 	List(List&& rhs);	//	Move constructor
 	//	Num elements with value of val
-	explicit List(int num, const T& val = T{});
+	explicit List(int num, const Value& val = Value{});
 	List(ConstIterator start, ConstIterator end);
 	~List();	//	Destructor
 
@@ -79,11 +80,11 @@ public:
 	List& operator=(List&& other);
 
 	// overloading comparison operators
-	bool operator==(const List<T>& rhs);
-	bool operator!=(const List<T>& rhs);
+	bool operator==(const List<Value>& rhs);
+	bool operator!=(const List<Value>& rhs);
 
 	// overloading output operator
-	std::ostream& operator<<(const List<T>& l);
+	std::ostream& operator<<(const List<Value>& l);
 
 	//	Member functions
 	int count() const; //	Return how many elements exist in the list
@@ -91,19 +92,19 @@ public:
 	void clear(); //	Remove all elements from the list
 	void reverse();	//	Reverse the order of the elements
 
-	T& first(); //	Return the first element by value, assert if no elements
-	const T& first() const;
-	T& last(); //	Return the last element by value, assert if no elements
-	const T& last()	const;
+	Value& first(); //	Return the first element by value, assert if no elements
+	const Value& first() const;
+	Value& last(); //	Return the last element by value, assert if no elements
+	const Value& last()	const;
 
-	void pushFront(const T& value); //	Add a new value to the front of the list
-	void pushFront(T&& value); //	Move version of insert
-	void pushBack(const T& value); //	Add a new value to the end of the list
-	void pushBack(T&& value); //	Move version of insert
+	void pushFront(const Value& value); //	Add a new value to the front of the list
+	void pushFront(Value&& value); //	Move version of insert
+	void pushBack(const Value& value); //	Add a new value to the end of the list
+	void pushBack(Value&& value); //	Move version of insert
 	void popFront(); //	Remove the first element
 	void popBack(); //	Remove the last element
 
-	void remove(const T& value); //	Remove all elements with matching value
+	void remove(const Value& value); //	Remove all elements with matching value
 
 	//	Print ouut all elements. ofc is deliminator
 	void print(std::ostream& os, char ofc = ' ') const;
@@ -112,28 +113,29 @@ public:
 	ConstIterator begin() const;
 	Iterator end(); //	Return an iterator to a null element
 	ConstIterator end() const;
-	Iterator insert(Iterator insertPos, const T& value); //	Add a new value ahead of specified iterator location
-	Iterator insert(Iterator insertPos, T&& value);	//	Move version of insert
+	Iterator insert(Iterator insertPos, const Value& value); //	Add a new value ahead of specified iterator location
+	Iterator insert(Iterator insertPos, Value&& value);	//	Move version of insert
 	Iterator erase(Iterator erasePos);	//	Erase one element
 	Iterator erase(Iterator start, Iterator end);	//	Erase [start, end)
 };
 
 //	Default constructor w/ no parameters
-template<typename T>
-List<T>::ConstIterator::ConstIterator() : current{ nullptr }
+template<typename Value>
+List<Value>::ConstIterator::ConstIterator() : current{ nullptr }
 {
+
 }
 
 //	operator* returns the element (to be retrieved later)	(protected)
-template<typename T>
-const T& List<T>::ConstIterator::operator*() const
+template<typename Value>
+const Value& List<Value>::ConstIterator::operator*() const
 {
 	return retrieve();
 }
 
 //	Operators various
-template<typename T>
-typename List<T>::ConstIterator& List<T>::ConstIterator::operator++()	//	Increment
+template<typename Value>
+typename List<Value>::ConstIterator& List<Value>::ConstIterator::operator++()	//	Increment
 {
 	//	Increment operator, pointer to the next node
 	current = current->next;
@@ -141,8 +143,8 @@ typename List<T>::ConstIterator& List<T>::ConstIterator::operator++()	//	Increme
 	//	Returns the derefenced instance of this class
 }
 
-template<typename T>
-typename List<T>::ConstIterator List<T>::ConstIterator::operator++(int)	//	++(int) postfix increment
+template<typename Value>
+typename List<Value>::ConstIterator List<Value>::ConstIterator::operator++(int)	//	++(int) postfix increment
 {
 	//	Return a copy of the original and then increment the original by one.
 	auto copy = *this;
@@ -150,15 +152,15 @@ typename List<T>::ConstIterator List<T>::ConstIterator::operator++(int)	//	++(in
 	return copy;
 }
 
-template<typename T>
-typename List<T>::ConstIterator& List<T>::ConstIterator::operator--()	// Decrement
+template<typename Value>
+typename List<Value>::ConstIterator& List<Value>::ConstIterator::operator--()	// Decrement
 {
 	current = current->prev;
 	return *this;
 }
 
-template<typename T>
-typename List<T>::ConstIterator List<T>::ConstIterator::operator--(int)	// --(int) postfix decrement
+template<typename Value>
+typename List<Value>::ConstIterator List<Value>::ConstIterator::operator--(int)	// --(int) postfix decrement
 {
 	auto copy = *this;
 	current = current->next;
@@ -166,104 +168,104 @@ typename List<T>::ConstIterator List<T>::ConstIterator::operator--(int)	// --(in
 }
 
 //	Comparisons
-template<typename T>
-bool List<T>::ConstIterator::operator==(const ConstIterator& rhs) const
+template<typename Value>
+bool List<Value>::ConstIterator::operator==(const ConstIterator& rhs) const
 {
 	return current == rhs.current;	// Refer to the same element? ==
 }
 
-template<typename T>
-bool List<T>::ConstIterator::operator!=(const ConstIterator& rhs) const
+template<typename Value>
+bool List<Value>::ConstIterator::operator!=(const ConstIterator& rhs) const
 {
 	return current != rhs.current;	//	They do not refer to the same element? !=
 }
 
 // protected constructor
-template<typename T>
-List<T>::ConstIterator::ConstIterator(typename List<T>::Node* p) : current{ p }
+template<typename Value>
+List<Value>::ConstIterator::ConstIterator(typename List<Value>::Node* p) : current{ p }
 {
 }
 //friend class List<T>;
 
 //	Nested Iterator class begin, will return a modifiable reference of current Node
-template<typename T>
-List<T>::Iterator::Iterator()	//	Constructor of derived iterator class
+template<typename Value>
+List<Value>::Iterator::Iterator()	//	Constructor of derived iterator class
 {
 }
 
-template<typename T>
-T& List<T>::Iterator::operator*()	//	This operator* is the one will return a modifiable reference of the data in current Node
+template<typename Value>
+Value& List<Value>::Iterator::operator*()	//	This operator* is the one will return a modifiable reference of the data in current Node
 {
 	return this->current->data;
 }
 
 //	Retrieve the element refers to current node's data
-template<typename T>
-T& List<T>::ConstIterator::retrieve() const
+template<typename Value>
+Value& List<Value>::ConstIterator::retrieve() const
 {
 	return current->data;
 }
 
-template<typename T>
-const T& List<T>::Iterator::operator*() const
+template<typename Value>
+const Value& List<Value>::Iterator::operator*() const
 {
 	return this->retrieve();
 }
 
 //	Operators needed again
-template<typename T>
-typename List<T>::Iterator& List<T>::Iterator::operator++()
+template<typename Value>
+typename List<Value>::Iterator& List<Value>::Iterator::operator++()
 {
 	//	this->current to call base's protected data
 	this->current = this->current->next;
 	return *this;
 }
 
-template<typename T>
-typename List<T>::Iterator List<T>::Iterator::operator++(int)
+template<typename Value>
+typename List<Value>::Iterator List<Value>::Iterator::operator++(int)
 {
 	auto cpy = *this;
 	this->current = this->current->next;
 	return cpy;
 }
 
-template<typename T>
-typename List<T>::Iterator& List<T>::Iterator::operator--()
+template<typename Value>
+typename List<Value>::Iterator& List<Value>::Iterator::operator--()
 {
 	this->current = this->current->previous;
 	return *this;
 }
 
-template<typename T>
-typename List<T>::Iterator List<T>::Iterator::operator--(int)
+template<typename Value>
+typename List<Value>::Iterator List<Value>::Iterator::operator--(int)
 {
 	auto cpy = *this;
 	this->current = this->current->previous;
 	return *this;
 }
 
-template<typename T>
-List<T>::Iterator::Iterator(typename List<T>::Node* p) : List<T>::ConstIterator{ p }
+template<typename Value>
+List<Value>::Iterator::Iterator(typename List<Value>::Node* p) : List<Value>::ConstIterator{ p }
 {
 
 }
 
-template<typename T>
-List<T>::List()	//	Constructor, no parameter and will call member function
+template<typename Value>
+List<Value>::List()	//	Constructor, no parameter and will call member function
 {
 	init();	//	Initialization private function
 }
 
-template<typename T>
-List<T>::~List()	//	Destructor
+template<typename Value>
+List<Value>::~List()	//	Destructor
 {
 	clear();	//	Housekeeping job, delete elements as needed
 	delete head;	//	Head node
 	delete tail;	//	Tail node
 }
 
-template<typename T>
-List<T>::List(const List<T>& rhs)	//	Copy constructor
+template<typename Value>
+List<Value>::List(const List<Value>& rhs)	//	Copy constructor
 {
 	init();	//	Call function to do the copy need it
 	for (auto itr = rhs.begin(); itr != rhs.end(); ++itr)
@@ -272,32 +274,32 @@ List<T>::List(const List<T>& rhs)	//	Copy constructor
 	}
 }
 
-template<typename T>	//	Move constructor
-List<T>::List(List<T>&& rhs) : size(rhs.size), head{ rhs.head }, tail{ rhs.tail }
+template<typename Value>	//	Move constructor
+List<Value>::List(List<Value>&& rhs) : size(rhs.size), head{ rhs.head }, tail{ rhs.tail }
 {
 	rhs.size = 0;
 	rhs.head = nullptr;
 	rhs.tail = nullptr;
 }
 
-template<typename T>	//	Copy assignment
-const List<T>& List<T>::operator=(const List<T>& rhs)
+template<typename Value>	//	Copy assignment
+const List<Value>& List<Value>::operator=(const List<Value>& rhs)
 {
 	auto copy = rhs;	//	Swap by reference
 	std::swap(*this, copy);
 	return *this;
 }
 
-template<typename T>	//	Move assignment
-List<T>& List<T>::operator=(List<T>&& rhs)
+template<typename Value>	//	Move assignment
+List<Value>& List<Value>::operator=(List<Value>&& rhs)
 {
 	init();
 	*this = std::move(rhs);
 	return *this;
 }
 
-template<typename T>
-List<T>::List(int num, const T& val)
+template<typename Value>
+List<Value>::List(int num, const Value& val)
 {
 	init();
 	int index;
@@ -307,8 +309,8 @@ List<T>::List(int num, const T& val)
 	}
 }
 
-template<typename T>	//	Constructor w/ element [start, end)
-List<T>::List(typename List<T>::ConstIterator start, typename List<T>::ConstIterator end)
+template<typename Value>	//	Constructor w/ element [start, end)
+List<Value>::List(typename List<Value>::ConstIterator start, typename List<Value>::ConstIterator end)
 {
 	init();
 	for (auto itr = start; itr != end; ++itr)
@@ -317,14 +319,14 @@ List<T>::List(typename List<T>::ConstIterator start, typename List<T>::ConstIter
 	}
 }
 
-template<typename T>   // number of elements
-int List<T>::count() const
+template<typename Value>   // number of elements
+int List<Value>::count() const
 {
 	return size;
 }
 
-template<typename T>
-void List<T>::reverse()	//	To reverse the order of elements if not empty
+template<typename Value>
+void List<Value>::reverse()	//	To reverse the order of elements if not empty
 {
 	if (!empty())	//	Check to be valid 
 	{
@@ -338,57 +340,57 @@ void List<T>::reverse()	//	To reverse the order of elements if not empty
 	std::swap(head, tail);
 }
 
-template<typename T>	//	First element
-T& List<T>::first()
+template<typename Value>	//	First element
+Value& List<Value>::first()
 {
 	return *begin();	//	Refence iterator to first element
 }
 
-template<typename T>
-const T& List<T>::first() const	//	Now, w/ no permission to modify 1st elem.
+template<typename Value>
+const Value& List<Value>::first() const	//	Now, w/ no permission to modify 1st elem.
 {
 	return *begin();
 }
 
-template<typename T>	//	Last element
-T& List<T>::last()
+template<typename Value>	//	Last element
+Value& List<Value>::last()
 {
 	return *(--end());
 }
 
-template<typename T>	//	Now, w/ no permission to modify last elem.
-const T& List<T>::last() const
+template<typename Value>	//	Now, w/ no permission to modify last elem.
+const Value& List<Value>::last() const
 {
 	return *(--end());
 }
 
-template<typename T>
-void List<T>::pushFront(T&& val)
+template<typename Value>
+void List<Value>::pushFront(Value&& val)
 {
 	insert(begin(), std::move(val));
 }
 
 //	Insert to the beginning, aka, insert right after Node* head
-template<typename T>
-void List<T>::pushFront(const T& val)
+template<typename Value>
+void List<Value>::pushFront(const Value& val)
 {
 	insert(begin(), val);	//	Insert after Node head
 }
 
-template<typename T>
-void List<T>::pushBack(T&& val)	//	Move version insert_back
+template<typename Value>
+void List<Value>::pushBack(Value&& val)	//	Move version insert_back
 {
 	insert(end(), std::move(val));
 }
 
-template<typename T>
-void List<T>::popFront()	//	Delete first element
+template<typename Value>
+void List<Value>::popFront()	//	Delete first element
 {
 	erase(begin());
 }
 
-template<typename T>
-void List<T>::clear()
+template<typename Value>
+void List<Value>::clear()
 {
 	while (!empty())
 	{
@@ -397,28 +399,28 @@ void List<T>::clear()
 }
 
 // insert to the end, alias, insert right before Node* tail
-template<typename T>
-void List<T>::pushBack(const T& val)
+template<typename Value>
+void List<Value>::pushBack(const Value& val)
 {
 	insert(end(), val);
 }
 
-template<typename T>
-void List<T>::popBack()
+template<typename Value>
+void List<Value>::popBack()
 {
 	erase(--end()); // erase one element, the last one. 
 }
 
-template<typename T>
-bool List<T>::empty() const
+template<typename Value>
+bool List<Value>::empty() const
 {
 	return count() == 0; // ==0  check if list is empty of nodes 
 }
 
-template<typename T>
-void List<T>::remove(const T& value) // remove all elements with value val
+template<typename Value>
+void List<Value>::remove(const Value& value) // remove all elements with value val
 {
-	for (auto itr = begin(); itr != end(); )
+	for (auto itr = begin(); itr != end();)
 	{
 		if (*itr == value)
 		{
@@ -431,64 +433,64 @@ void List<T>::remove(const T& value) // remove all elements with value val
 	}
 }
 
-template<typename T>
-typename List<T>::Iterator List<T>::begin()
+template<typename Value>
+typename List<Value>::Iterator List<Value>::begin()
 {
 	if (!empty()) // check first
 	{
-		typename List<T>::Iterator itr{ head->next };
+		typename List<Value>::Iterator itr{ head->next };
 		return itr; // begining node (copy)
 	}
 }
 
-template<typename T>
-typename List<T>::ConstIterator List<T>::begin() const
+template<typename Value>
+typename List<Value>::ConstIterator List<Value>::begin() const
 {
 	if (!empty())
 	{
-		typename List<T>::ConstIterator const_itr{ head->next };
+		typename List<Value>::ConstIterator const_itr{ head->next };
 		return const_itr;
 	}
 }
 
-template<typename T>
-typename List<T>::Iterator List<T>::end()
+template<typename Value>
+typename List<Value>::Iterator List<Value>::end()
 {
-	typename List<T>::Iterator itr{ tail };
+	typename List<Value>::Iterator itr{ tail };
 	return itr; // return the end node (copy)
 }
 
-template<typename T>
-typename List<T>::ConstIterator List<T>::end() const
+template<typename Value>
+typename List<Value>::ConstIterator List<Value>::end() const
 {
-	typename List<T>::ConstIterator const_itr{ tail };
+	typename List<Value>::ConstIterator const_itr{ tail };
 	return const_itr;
 }
-template<typename T>
-typename List<T>::Iterator List<T>::insert(typename List<T>::Iterator itr, const T& val)
+template<typename Value>
+typename List<Value>::Iterator List<Value>::insert(typename List<Value>::Iterator itr, const Value& val)
 { // pointer "p" is copy of current node
 	auto* pointer = itr.current;
 	size++;
-	auto* newPtr = new List<T>::Node{ val, pointer->previous, pointer };
+	auto* newPtr = new List<Value>::Node{ val, pointer->previous, pointer };
 	pointer->previous->next = newPtr;
 	pointer->previous = newPtr;
-	typename List<T>::Iterator iter{ newPtr };
+	typename List<Value>::Iterator iter{ newPtr };
 	return iter;
 }
-template<typename T>
-typename List<T>::Iterator List<T>::insert(typename List<T>::Iterator itr, T&& val)
+template<typename Value>
+typename List<Value>::Iterator List<Value>::insert(typename List<Value>::Iterator itr, Value&& val)
 {
 	auto* pointer = itr.current;
 	size++;
-	auto* newPtr = new List<T>::Node{ std::move(val), pointer->previous, pointer };
+	auto* newPtr = new List<Value>::Node{ std::move(val), pointer->previous, pointer };
 	pointer->previous->next = newPtr;
 	pointer->previous = newPtr;
-	typename List<T>::Iterator iter{ newPtr };
+	typename List<Value>::Iterator iter{ newPtr };
 	return iter;
 }
 
-template<typename T>
-typename List<T>::Iterator List<T>::erase(typename List<T>::Iterator start, typename List<T>::Iterator end)
+template<typename Value>
+typename List<Value>::Iterator List<Value>::erase(typename List<Value>::Iterator start, typename List<Value>::Iterator end)
 {
 	for (auto itr = start; itr != end;) // erase from start to end
 	{
@@ -498,8 +500,8 @@ typename List<T>::Iterator List<T>::erase(typename List<T>::Iterator start, type
 	return end;
 }
 
-template<typename T>
-void List<T>::init()  // init. private function
+template<typename Value>
+void List<Value>::init()  // init. private function
 {
 	size = 0;
 	head = new Node;
@@ -508,12 +510,12 @@ void List<T>::init()  // init. private function
 	tail->previous = head;
 }
 
-template<typename T>
-typename List<T>::Iterator List<T>::erase(typename List<T>::Iterator itr)
+template<typename Value>
+typename List<Value>::Iterator List<Value>::erase(typename List<Value>::Iterator itr)
 {
 	// erase one element
 	auto* p = itr.current;
-	typename List<T>::Iterator value{ p->next };
+	typename List<Value>::Iterator value{ p->next };
 	p->previous->next = p->next;
 	p->next->previous = p->previous;
 	delete p;
@@ -522,14 +524,14 @@ typename List<T>::Iterator List<T>::erase(typename List<T>::Iterator itr)
 }
 
 // overloading comparison
-template<typename T>
-bool operator!=(const List<T>& lhs, const List<T>& rhs)
+template<typename Value>
+bool operator!=(const List<Value>& lhs, const List<Value>& rhs)
 {
 	return !(lhs == rhs);
 }
 
-template<typename T>
-bool List<T>::operator==(const List<T>& rhs)
+template<typename Value>
+bool List<Value>::operator==(const List<Value>& rhs)
 {
 	bool flag = true;
 	if (count() == rhs.count())
@@ -547,8 +549,8 @@ bool List<T>::operator==(const List<T>& rhs)
 		return false;
 }
 
-template<typename T>
-bool List<T>::operator!=(const List<T>& rhs)
+template<typename Value>
+bool List<Value>::operator!=(const List<Value>& rhs)
 {
 	bool flag = false;
 	if (count() == rhs.count())
@@ -567,16 +569,16 @@ bool List<T>::operator!=(const List<T>& rhs)
 }
 
 //	Overloading output
-template<typename T>
-std::ostream& operator<<(std::ostream& os, const List<T>& l)
+template<typename Value>
+std::ostream& operator<<(std::ostream& os, const List<Value>& l)
 {
 	l.print(os);
 	return os;
 }
 
 //	Print out all elements
-template<typename T>
-void List<T>::print(std::ostream& os, char ofc) const
+template<typename Value>
+void List<Value>::print(std::ostream& os, char ofc) const
 {
 	for (auto iterator = begin(); iterator != end(); ++iterator)
 	{

@@ -50,7 +50,8 @@ public:
 				if (m_data[hashedKey].key.empty())
 				{
 					m_data[hashedKey].key = key;
-					m_data[hashedKey].value = LoadTexture(key.c_str());
+					Texture texture = LoadTexture(key.c_str());
+					m_data[hashedKey].value = texture;
 					added = true;
 				}
 				else
@@ -64,7 +65,7 @@ public:
 			}
 	}
 
-	Texture2D Find(string key)
+	Texture2D& Find(string key)
 	{
 		auto hashedKey = APHash(key) % m_size;
 		if (m_data[hashedKey].key.empty())

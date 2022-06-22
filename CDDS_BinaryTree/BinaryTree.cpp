@@ -41,7 +41,7 @@ void BinaryTree::Insert(int a_nValue)
 	}
 	else if (FindNode(a_nValue, newNode, newNode))
 	{
-		//delete newNode;
+		// Will find the value and if already contained within the tree will highlight it. 
 	}
 	else
 	{
@@ -73,6 +73,7 @@ void BinaryTree::Insert(int a_nValue)
 	}
 }
 
+//Returns the node that contains the searched for value. Returens nullptr if not found. 
 TreeNode* BinaryTree::Find(int a_nValue)
 {
 	TreeNode* pCurrent = nullptr;
@@ -81,6 +82,8 @@ TreeNode* BinaryTree::Find(int a_nValue)
 	return FindNode(a_nValue, pCurrent, pParent) ? pCurrent : nullptr;
 }
 
+//Finds if the requested value is in the binary tree. Returns the node and parent node as well as
+//a bool if found or not. 
 bool BinaryTree::FindNode(int a_nSearchValue, TreeNode*& ppOutNode, TreeNode*& ppOutParent)
 {
 	TreeNode* pCurrent = m_pRoot;
@@ -109,6 +112,7 @@ bool BinaryTree::FindNode(int a_nSearchValue, TreeNode*& ppOutNode, TreeNode*& p
 	return false;
 }
 
+//Removes the requested node, relinking any broken branches as necessary.
 void BinaryTree::Remove(int a_nValue)
 {
 	TreeNode* root = m_pRoot;
@@ -211,28 +215,6 @@ void BinaryTree::Remove(int a_nValue)
 	}
 }
 
-void BinaryTree::PrintOrdered()
-{
-	PrintOrderedRecurse(m_pRoot);
-	cout << endl;
-}
-
-void BinaryTree::PrintOrderedRecurse(TreeNode* pNode)
-{
-
-}
-
-void BinaryTree::PrintUnordered()
-{
-	PrintUnorderedRecurse(m_pRoot);
-	cout << endl;
-}
-
-void BinaryTree::PrintUnorderedRecurse(TreeNode* pNode)
-{
-
-}
-
 void BinaryTree::Draw(TreeNode* selected)
 {
 	Draw(m_pRoot, 400, 40, 400, selected);
@@ -240,7 +222,6 @@ void BinaryTree::Draw(TreeNode* selected)
 
 void BinaryTree::Draw(TreeNode* pNode, int x, int y, int horizontalSpacing, TreeNode* selected)
 {
-
 	horizontalSpacing /= 2;
 
 	if (pNode)

@@ -41,7 +41,7 @@ public:
 		return m_data[hashedKey].value;
 	}
 
-	void Add(string key)
+	Texture2D& Add(string key)
 	{
 		auto hashedKey = APHash(key) % m_size;
 		bool added = false;
@@ -63,6 +63,7 @@ public:
 					}
 				}
 			}
+			return m_data[hashedKey].value;
 	}
 
 	Texture2D& Find(string key)
@@ -70,7 +71,7 @@ public:
 		auto hashedKey = APHash(key) % m_size;
 		if (m_data[hashedKey].key.empty())
 		{
-			this->Add(key);
+			return this->Add(key);
 		}
 		else
 		{

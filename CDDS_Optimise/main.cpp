@@ -51,9 +51,7 @@ int main(int argc, char* argv[])
 	//Resource Manager
 	ResourceManager rM(CRITTER_COUNT);
 	string critSprite = "res/10.png";
-	string destSprite = "res/9.png";
-	rM.Add(critSprite, LoadTexture(critSprite.c_str()));
-	rM.Add(destSprite, LoadTexture(destSprite.c_str()));
+	string destSprite = "res/9.png";	
 
 	Critter critters[CRITTER_COUNT];
 	List<Critter*> aliveCritters;

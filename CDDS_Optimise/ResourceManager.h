@@ -34,13 +34,14 @@ public:
 		auto hashedKey = APHash(key) % m_size;
 		return m_data[hashedKey].value;
 	}
+
 	const Texture2D& operator [](string key) const
 	{
 		auto hashedKey = APHash(key) % m_size;
 		return m_data[hashedKey].value;
 	}
 
-	void Add(string key, Texture2D texture)
+	void Add(string key)
 	{
 		auto hashedKey = APHash(key) % m_size;
 		bool added = false;
@@ -49,23 +50,39 @@ public:
 				if (m_data[hashedKey].key.empty())
 				{
 					m_data[hashedKey].key = key;
-					m_data[hashedKey].value = texture;
+					m_data[hashedKey].value = LoadTexture(key.c_str());
 					added = true;
 				}
 				else
 				{
 					hashedKey++;
 					if (hashedKey == m_size)
+					{
 						hashedKey = 0;
+					}
 				}
-
 			}
 	}
 
 	Texture2D Find(string key)
 	{
 		auto hashedKey = APHash(key) % m_size;
-		return m_data[hashedKey].value;
+		if (m_data[hashedKey].key.empty())
+		{
+			this->Add(key);
+		}
+		else
+		{
+			while (m_data[hashedKey].key != key)
+			{
+				hashedKey++;
+				if (hashedKey == m_size)
+				{
+					hashedKey = 0;
+				}
+			}
+			return m_data[hashedKey].value;
+		}
 	}
 
 private:

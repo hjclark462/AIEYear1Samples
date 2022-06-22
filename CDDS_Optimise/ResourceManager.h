@@ -6,14 +6,8 @@ using namespace std;
 
 struct Bucket
 {
-	string* key;
-	Texture2D* value;
-};
-
-struct Node
-{
-	Bucket data;
-	Node* next;
+	string key;
+	Texture2D value;
 };
 
 unsigned int APHash(string key)
@@ -33,63 +27,48 @@ unsigned int APHash(string key)
 class ResourceManager
 {
 public:
-	ResourceManager(unsigned int size) : m_size(size), m_data(new Node[size]) {}
-	~ResourceManager() { delete m_data; }
+	ResourceManager(unsigned int size) : m_size(size), m_data(new Bucket[size]) {}
 
-	Node& operator[] (string key)
+	Texture2D& operator[] (string key)
 	{
 		auto hashedKey = APHash(key) % m_size;
-		return m_data[hashedKey];
+		return m_data[hashedKey].value;
 	}
-	const Node& operator [](string key) const
+	const Texture2D& operator [](string key) const
 	{
 		auto hashedKey = APHash(key) % m_size;
-		return m_data[hashedKey];
+		return m_data[hashedKey].value;
 	}
 
-	void Add(string* key)
+	void Add(string key, Texture2D texture)
 	{
-		Texture2D texture = LoadTexture(key->c_str());
-		/*m_filler++;
-		if (m_filler <= m_size * 0.7f)
-		{*/
-			auto hashedKey = APHash(*key) % m_size;
-			if (&m_data[hashedKey] == nullptr)
+		auto hashedKey = APHash(key) % m_size;
+		bool added = false;
+			while (!added)
 			{
-				m_data[hashedKey].data.key = key;
-				m_data[hashedKey].data.value = &texture;
+				if (m_data[hashedKey].key.empty())
+				{
+					m_data[hashedKey].key = key;
+					m_data[hashedKey].value = texture;
+					added = true;
+				}
+				else
+				{
+					hashedKey++;
+					if (hashedKey == m_size)
+						hashedKey = 0;
+				}
+
 			}
-			else
-			{
-				m_data[hashedKey].next->data.key = key;
-				m_data[hashedKey].next->data.value = &texture;
-			}
-		/*}
-		else
-		{
-			Upsize(key);
-		}*/
 	}
 
 	Texture2D Find(string key)
 	{
 		auto hashedKey = APHash(key) % m_size;
-		return *m_data[hashedKey].data.value;
-
-	}
-
-	void Remove(string key)
-	{
-		
-	}
-
-	void Upsize(string key)
-	{
-
+		return m_data[hashedKey].value;
 	}
 
 private:
-	Node* m_data;
+	Bucket* m_data;
 	unsigned int m_size;
-	unsigned int m_filler;
 };

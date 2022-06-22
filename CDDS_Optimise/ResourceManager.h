@@ -19,42 +19,35 @@ unsigned int APHash(string key)
 	return hash;
 }
 
-template<typename Value>
 class HashTable
 {
 public:
 	HashTable(unsigned int size) : m_size(size) {}
 	~HashTable() { delete m_data; }
 
-	Value& operator[] (string key)
+	Texture2D& operator[] (string key)
 	{
 		auto hashedKey = APHash(key) % m_size;
-		return m_data[hashedKey];
+		return m_data[hashedKey].second;
 	}
-	const Value& operator [](string key) const
+	const Texture2D& operator [](string key) const
 	{
 		auto hashedKey = APHash(key) % m_size;
-		return m_data[hashedKey];
+		return m_data[hashedKey].second;
 	}
 
-	void Add(string* key, Value* val)
+	void Add(string* key)
 	{
+		Texture2D texture = LoadTexture(key->c_str());
 		m_filler++;
 		if (m_filler <= m_size * 0.7f)
 		{
 			auto hashedKey = APHash(*key) % m_size;
-			if (m_data[hashedKey] == nullptr)
+			if (&m_data[hashedKey] == nullptr)
 			{
-				m_data[hashedKey] = pair<key, val>;
+				m_data[hashedKey].first = key;
+				m_data[hashedKey].second = &texture;
 			}
-			else
-			{
-				m_data[hashedKey] = pair<m_data[hashedKey], pair<key, val>>;
-			}
-		}
-		else
-		{
-			Upsize(key,  val);
 		}
 	}
 
@@ -63,13 +56,13 @@ public:
 		
 	}
 
-	void Upsize(const char key, Value val)
+	void Upsize(const char key, Texture2D val)
 	{
 
 	}
 
 private:
-	vector<pair<string*, Value*>> m_data;
+	vector<pair<string*, Texture2D*>> m_data;
 	unsigned int m_size;
 	unsigned int m_filler;
 };

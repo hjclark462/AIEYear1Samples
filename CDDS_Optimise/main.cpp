@@ -24,8 +24,8 @@
 #include <random>
 #include <time.h>
 #include "Critter.h"
+#include "ResourceManager.h"
 #include "List.h"
-#include "HashTable.h"
 
 int main(int argc, char* argv[])
 {
@@ -38,35 +38,36 @@ int main(int argc, char* argv[])
 
 	//SetTargetFPS(60);
 	//--------------------------------------------------------------------------------------
-	const int CRITTER_COUNT = 50;
-	const int MAX_VELOCITY = 80;
 
 	srand(time(NULL));
-	HashTable<Texture2D> resources(CRITTER_COUNT);
 
 
 	// create some critters
+	const int CRITTER_COUNT = 50;
+	const int MAX_VELOCITY = 80;
 
-	List<Critter> aliveCritters;
-	List<Critter> deadCritters;
-
-	
-	resources.Add("res/10.png", LoadTexture("res/10.png"));
+	Critter critters[CRITTER_COUNT];
+	List<Critter*> aliveCritters;
+	List<Critter*> deadCritters;
 
 	for (int i = 0; i < CRITTER_COUNT; i++)
 	{
 		// create a random direction vector for the velocity
+		// create a random direction vector for the velocity
 		Vector2 velocity = { -100 + (rand() % 200), -100 + (rand() % 200) };
 		// normalize and scale by a random speed
 		velocity = Vector2Scale(Vector2Normalize(velocity), MAX_VELOCITY);
-		Critter critter;
+
 		// create a critter in a random location
-		critter.Init(
+
+		critters[i].Init(
 			{ (float)(5 + rand() % (screenWidth - 10)), (float)(5 + (rand() % screenHeight - 10)) },
 			velocity,
 			12, "res/10.png");
-		aliveCritters.pushBack(critter);
+
+		aliveCritters.pushBack(&critters[i]);
 	}
+
 
 	Critter destroyer;
 	Vector2 velocity = { -100 + (rand() % 200), -100 + (rand() % 200) };
@@ -105,68 +106,78 @@ int main(int argc, char* argv[])
 			destroyer.SetY(screenHeight);
 			destroyer.SetVelocity(Vector2{ destroyer.GetVelocity().x, -destroyer.GetVelocity().y });
 		}
-		auto itr = aliveCritters.begin();
-		itr--;
+
 		// update the critters
 		// (dirty flags will be cleared during update)
-		for (Critter critter : aliveCritters)
+
+
+		for (auto i = aliveCritters.begin(); i != aliveCritters.end(); )
 		{
-			itr++;
-			critter.Update(delta);
+			(*i)->Update(delta);
 
 			// check each critter against screen bounds
-			if (critter.GetX() < 0) {
-				critter.SetX(0);
-				critter.SetVelocity(Vector2{ -critter.GetVelocity().x, critter.GetVelocity().y });
+			if ((*i)->GetX() < 0) {
+				(*i)->SetX(0);
+				(*i)->SetVelocity(Vector2{ -(*i)->GetVelocity().x, (*i)->GetVelocity().y });
 			}
-			if (critter.GetX() > screenWidth) {
-				critter.SetX(screenWidth);
-				critter.SetVelocity(Vector2{ -critter.GetVelocity().x, critter.GetVelocity().y });
+			if ((*i)->GetX() > screenWidth) {
+				(*i)->SetX(screenWidth);
+				(*i)->SetVelocity(Vector2{ -(*i)->GetVelocity().x, (*i)->GetVelocity().y });
 			}
-			if (critter.GetY() < 0) {
-				critter.SetY(0);
-				critter.SetVelocity(Vector2{ critter.GetVelocity().x, -critter.GetVelocity().y });
+			if ((*i)->GetY() < 0) {
+				(*i)->SetY(0);
+				(*i)->SetVelocity(Vector2{ (*i)->GetVelocity().x, -(*i)->GetVelocity().y });
 			}
-			if (critter.GetY() > screenHeight) {
-				critter.SetY(screenHeight);
-				critter.SetVelocity(Vector2{ critter.GetVelocity().x, -critter.GetVelocity().y });
+			if ((*i)->GetY() > screenHeight) {
+				(*i)->SetY(screenHeight);
+				(*i)->SetVelocity(Vector2{ (*i)->GetVelocity().x, -(*i)->GetVelocity().y });
 			}
 
 			// kill any critter touching the destroyer
 			// simple circle-to-circle collision check
-			float dist = Vector2Distance(critter.GetPosition(), destroyer.GetPosition());
-			if (dist < critter.GetRadius() + destroyer.GetRadius())
+			float dist = Vector2Distance((*i)->GetPosition(), destroyer.GetPosition());
+			if (dist < (*i)->GetRadius() + destroyer.GetRadius())
 			{
-				deadCritters.pushBack(critter);
-				aliveCritters.erase(itr);
+				(*i)->Destroy();
+				deadCritters.pushBack((*i));
+				auto itr = aliveCritters.begin();
+				for (; itr != i; )
+					itr++;
+				i = aliveCritters.erase(itr);
+			}
+			else
+			{
+				i++;
 			}
 		}
 
-		//  check for critter-on-critter collisions
-		for (Critter crit1 : aliveCritters)
+		// check for critter-on-critter collisions
+		for (Critter* critteri : aliveCritters)
 		{
-			for (Critter crit2 : aliveCritters)
+			for (Critter* critterj : aliveCritters)
 			{
-				if (&crit1 == &crit2 || crit1.IsDirty()) // note: the other critter (j) could be dirty - that's OK
+				if (critteri == critterj || critteri->IsDirty()) // note: the other critter (j) could be dirty - that's OK
+				{
 					continue;
+				}
 				// check every critter against every other critter
-				float dist = Vector2Distance(crit1.GetPosition(), crit2.GetPosition());
-				if (dist < crit1.GetRadius() + crit2.GetRadius())
+				float dist = Vector2Distance(critteri->GetPosition(), critterj->GetPosition());
+				if (dist < critteri->GetRadius() + critterj->GetRadius())
 				{
 					// collision!
 					// do math to get critters bouncing
-					Vector2 normal = Vector2Normalize(Vector2Subtract(crit2.GetPosition(), crit1.GetPosition()));
+					Vector2 normal = Vector2Normalize(Vector2Subtract(critterj->GetPosition(), critteri->GetPosition()));
 
 					// not even close to real physics, but fine for our needs
-					crit1.SetVelocity(Vector2Scale(normal, -MAX_VELOCITY));
+					critteri->SetVelocity(Vector2Scale(normal, -MAX_VELOCITY));
 					// set the critter to *dirty* so we know not to process any more collisions on it
-					crit1.SetDirty();
+					critteri->SetDirty();
 
 					// we still want to check for collisions in the case where 1 critter is dirty - so we need a check 
 					// to make sure the other critter is clean before we do the collision response
-					if (!crit2.IsDirty()) {
-						crit2.SetVelocity(Vector2Scale(normal, MAX_VELOCITY));
-						crit2.SetDirty();
+					if (!critterj->IsDirty()) {
+						critterj->SetVelocity(Vector2Scale(normal, MAX_VELOCITY));
+						critterj->SetDirty();
 					}
 					break;
 				}
@@ -177,22 +188,28 @@ int main(int argc, char* argv[])
 		if (timer <= 0)
 		{
 			timer = 1;
-
-			// find any dead critters and spit them out (respawn)
-			if (!deadCritters.empty())
+			if (deadCritters.count() > 0)
 			{
-				Vector2 normal = Vector2Normalize(destroyer.GetVelocity());
+				// find any dead critters and spit them out (respawn)
+				for (auto i = deadCritters.begin(); i != deadCritters.end(); i++)
+				{
+					if ((*i)->IsDead())
+					{
+						Vector2 normal = Vector2Normalize(destroyer.GetVelocity());
 
-				// get a position behind the destroyer, and far enough away that the critter won't bump into it again
-				Vector2 pos = destroyer.GetPosition();
-				pos = Vector2Add(pos, Vector2Scale(normal, -50));
-				// its pretty ineficient to keep reloading textures. ...if only there was something else we could do
-				deadCritters.first().Init(pos, Vector2Scale(normal, -MAX_VELOCITY), 12, "res/10.png");
-				aliveCritters.pushBack(deadCritters.first());
-				deadCritters.popFront();
-				break;
+						// get a position behind the destroyer, and far enough away that the critter won't bump into it again
+						Vector2 pos = destroyer.GetPosition();
+						pos = Vector2Add(pos, Vector2Scale(normal, -50));
+						// its pretty ineficient to keep reloading textures. ...if only there was something else we could do
+						(*i)->Init(pos, Vector2Scale(normal, -MAX_VELOCITY), 12, "res/10.png");
+						aliveCritters.pushBack(*i);
+						deadCritters.popFront();
+						break;
+					}
+				}
 			}
 			nextSpawnPos = destroyer.GetPosition();
+
 		}
 
 		// Draw
@@ -202,9 +219,9 @@ int main(int argc, char* argv[])
 		ClearBackground(RAYWHITE);
 
 		// draw the critters
-		for (Critter critter : aliveCritters)
+		for (Critter* critter : aliveCritters)
 		{
-			critter.Draw();
+			critter->Draw();
 		}
 		// draw the destroyer
 		// (if you're wondering why it looks a little odd when sometimes critters are destroyed when they're not quite touching the 
@@ -218,8 +235,7 @@ int main(int argc, char* argv[])
 		//----------------------------------------------------------------------------------
 	}
 
-	aliveCritters.clear();
-	deadCritters.clear();
+
 
 	// De-Initialization
 	//--------------------------------------------------------------------------------------   

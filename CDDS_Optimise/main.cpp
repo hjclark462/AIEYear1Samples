@@ -41,10 +41,19 @@ int main(int argc, char* argv[])
 
 	srand(time(NULL));
 
+	
+	
 
 	// create some critters
 	const int CRITTER_COUNT = 50;
 	const int MAX_VELOCITY = 80;
+
+	//Resource Manager
+	ResourceManager rM(CRITTER_COUNT);
+	string critSprite = "res/10.png";
+	string destSprite = "res/9.png";
+	rM.Add(&critSprite);
+	rM.Add(&destSprite);
 
 	Critter critters[CRITTER_COUNT];
 	List<Critter*> aliveCritters;
@@ -63,7 +72,7 @@ int main(int argc, char* argv[])
 		critters[i].Init(
 			{ (float)(5 + rand() % (screenWidth - 10)), (float)(5 + (rand() % screenHeight - 10)) },
 			velocity,
-			12, "res/10.png");
+			12, rM.Find("res/10.png"));
 
 		aliveCritters.pushBack(&critters[i]);
 	}
@@ -72,7 +81,7 @@ int main(int argc, char* argv[])
 	Critter destroyer;
 	Vector2 velocity = { -100 + (rand() % 200), -100 + (rand() % 200) };
 	velocity = Vector2Scale(Vector2Normalize(velocity), MAX_VELOCITY);
-	destroyer.Init(Vector2{ (float)(screenWidth >> 1), (float)(screenHeight >> 1) }, velocity, 20, "res/9.png");
+	destroyer.Init(Vector2{ (float)(screenWidth >> 1), (float)(screenHeight >> 1) }, velocity, 20, rM.Find("res/9.png"));
 
 	float timer = 1;
 	Vector2 nextSpawnPos = destroyer.GetPosition();
@@ -201,7 +210,7 @@ int main(int argc, char* argv[])
 						Vector2 pos = destroyer.GetPosition();
 						pos = Vector2Add(pos, Vector2Scale(normal, -50));
 						// its pretty ineficient to keep reloading textures. ...if only there was something else we could do
-						(*i)->Init(pos, Vector2Scale(normal, -MAX_VELOCITY), 12, "res/10.png");
+						(*i)->Init(pos, Vector2Scale(normal, -MAX_VELOCITY), 12, rM.Find("res/10.png"));
 						aliveCritters.pushBack(*i);
 						deadCritters.popFront();
 						break;

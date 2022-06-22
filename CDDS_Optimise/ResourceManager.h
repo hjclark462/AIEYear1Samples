@@ -4,6 +4,17 @@
 #include <string>
 using namespace std;
 
+struct Bucket
+{
+	string* key;
+	Texture2D* value;
+};
+
+struct Node
+{
+	Bucket data;
+	Node* next;
+};
 
 unsigned int APHash(string key)
 {
@@ -19,50 +30,66 @@ unsigned int APHash(string key)
 	return hash;
 }
 
-class HashTable
+class ResourceManager
 {
 public:
-	HashTable(unsigned int size) : m_size(size) {}
-	~HashTable() { delete m_data; }
+	ResourceManager(unsigned int size) : m_size(size), m_data(new Node[size]) {}
+	~ResourceManager() { delete m_data; }
 
-	Texture2D& operator[] (string key)
+	Node& operator[] (string key)
 	{
 		auto hashedKey = APHash(key) % m_size;
-		return m_data[hashedKey].second;
+		return m_data[hashedKey];
 	}
-	const Texture2D& operator [](string key) const
+	const Node& operator [](string key) const
 	{
 		auto hashedKey = APHash(key) % m_size;
-		return m_data[hashedKey].second;
+		return m_data[hashedKey];
 	}
 
 	void Add(string* key)
 	{
 		Texture2D texture = LoadTexture(key->c_str());
-		m_filler++;
+		/*m_filler++;
 		if (m_filler <= m_size * 0.7f)
-		{
+		{*/
 			auto hashedKey = APHash(*key) % m_size;
 			if (&m_data[hashedKey] == nullptr)
 			{
-				m_data[hashedKey].first = key;
-				m_data[hashedKey].second = &texture;
+				m_data[hashedKey].data.key = key;
+				m_data[hashedKey].data.value = &texture;
 			}
-		}
+			else
+			{
+				m_data[hashedKey].next->data.key = key;
+				m_data[hashedKey].next->data.value = &texture;
+			}
+		/*}
+		else
+		{
+			Upsize(key);
+		}*/
 	}
 
-	bool Find(const char key)
+	Texture2D Find(string key)
+	{
+		auto hashedKey = APHash(key) % m_size;
+		return *m_data[hashedKey].data.value;
+
+	}
+
+	void Remove(string key)
 	{
 		
 	}
 
-	void Upsize(const char key, Texture2D val)
+	void Upsize(string key)
 	{
 
 	}
 
 private:
-	vector<pair<string*, Texture2D*>> m_data;
+	Node* m_data;
 	unsigned int m_size;
 	unsigned int m_filler;
 };

@@ -185,7 +185,6 @@ template<typename Value>
 List<Value>::ConstIterator::ConstIterator(typename List<Value>::Node* p) : current{ p }
 {
 }
-//friend class List<T>;
 
 //	Nested Iterator class begin, will return a modifiable reference of current Node
 template<typename Value>

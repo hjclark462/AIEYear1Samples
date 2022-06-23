@@ -24,7 +24,7 @@ private:
 	int m_value;
 
 	// node's children
-	TreeNode* m_left;
-	TreeNode* m_right;
+	TreeNode* m_left = nullptr;
+	TreeNode* m_right = nullptr;
 };
 
